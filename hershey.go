@@ -10,21 +10,19 @@ type coord struct {
 }
 
 type Sym struct {
-    id int
-    numVert int
-    leftPos, rightPos int
+    id, leftPos, rightPos int
     coords []coord
 }
 
 func ReadSym(line string) (*Sym, error) {
     var (
-        n int
+        n, numVert int
         x, y byte
         err error
     )
     sym := new(Sym)
     r := strings.NewReader(line)
-    n, err = fmt.Fscanf(r, " %4d %2d%c%c", &sym.id, &sym.numVert, &x, &y)
+    n, err = fmt.Fscanf(r, " %4d %2d%c%c", &sym.id, &numVert, &x, &y)
     if n != 4 {
         return nil, fmt.Errorf("wanted to scan %d items, got %d", 4, n)
     }
@@ -33,7 +31,7 @@ func ReadSym(line string) (*Sym, error) {
     }
     sym.leftPos = int(x) - int('R')
     sym.rightPos = int(y) - int('R')
-    for i := 0; i < sym.numVert-1; i++ {
+    for i := 0; i < numVert-1; i++ {
         n, err = fmt.Fscanf(r, "%c%c", &x, &y)
         if n != 2 {
             return nil, fmt.Errorf("wanted to scan %d items, got %d", 2, n)
