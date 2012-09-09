@@ -19,31 +19,27 @@ type Sym struct {
 func ReadSym(line string) (*Sym, error) {
     var (
         n int
-        b, x, y byte
+        x, y byte
         err error
     )
     sym := new(Sym)
     r := strings.NewReader(line)
-    if n, err = fmt.Fscanf(r, " %4d", &sym.id); n != 1 || err != nil {
-        return nil, fmt.Errorf("couldn't scan id: %s", err)
+    n, err = fmt.Fscanf(r, " %4d %2d%c%c", &sym.id, &sym.numVert, &x, &y)
+    if n != 4 {
+        return nil, fmt.Errorf("wanted to scan %d items, got %d", 4, n)
     }
-    if n, err = fmt.Fscanf(r, " %2d", &sym.numVert); n != 1 || err != nil {
-        return nil, fmt.Errorf("couldn't scan numVert: %s", err)
+    if err != nil {
+        return nil, fmt.Errorf("scanning symbol: %s", err)
     }
-    if b, err = r.ReadByte(); err != nil {
-        return nil, fmt.Errorf("couldn't scan leftPos: %s", err)
-    }
-    sym.leftPos = int(b) - int('R')
-    if b, err = r.ReadByte(); err != nil {
-        return nil, fmt.Errorf("couldn't scan rightPos: %s", err)
-    }
-    sym.rightPos = int(b) - int('R')
+    sym.leftPos = int(x) - int('R')
+    sym.rightPos = int(y) - int('R')
     for i := 0; i < sym.numVert-1; i++ {
-        if x, err = r.ReadByte(); err != nil {
-            return nil, fmt.Errorf("couldn't scan %d coord x: %s", i, err)
+        n, err = fmt.Fscanf(r, "%c%c", &x, &y)
+        if n != 2 {
+            return nil, fmt.Errorf("wanted to scan %d items, got %d", 2, n)
         }
-        if y, err = r.ReadByte(); err != nil {
-            return nil, fmt.Errorf("couldn't scan %d coord y: %s", i, err)
+        if err != nil {
+            return nil, fmt.Errorf("scanning coords in symbol: %s", err)
         }
         sym.coords = append(sym.coords, coord{int(x)-int('R'), int(y)-int('R')})
     }

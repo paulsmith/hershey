@@ -5,12 +5,12 @@ import (
     "reflect"
 )
 
-type SymTest struct {
+type ReadSymTest struct {
     in string
     sym Sym
 }
 
-var symTests = []SymTest{
+var readSymTests = []ReadSymTest{
     {
         "    2 16MWOMOV ROMSMUNUPSQ ROQSQURUUSVOV",
         Sym{2, 16, -5, 5, []coord{
@@ -40,7 +40,7 @@ var symTests = []SymTest{
 }
 
 func TestInput(t *testing.T) {
-    for _, test := range symTests {
+    for _, test := range readSymTests {
         sym, err := ReadSym(test.in)
         if err != nil {
             t.Error(err)
